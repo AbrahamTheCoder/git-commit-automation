@@ -1,7 +1,10 @@
 import subprocess
 # from openai import OpenAI
-from langchain_ollama import ChatOllama, OllamaLLM
+# from langchain_ollama import OllamaLLM
+from langchain_anthropic import AnthropicLLM, ChatAnthropic
 import os
+
+# load_env = os.getenv("LOAD_ENV")
 
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # ollama_client = ChatOllama(
@@ -10,11 +13,16 @@ import os
 #     temperature=0.5,
 # )
 
-ollama = OllamaLLM(
-    base_url="http://192.168.50.42:11434",
-    model="deepseek-r1:14b",
-    temperature=0.5,
+claude_client = ChatAnthropic(
+    api_key=os.getenv("CLAUDE_API_KEY"),
+    model="claude-3-5-sonnet-20240620",
 )
+
+# ollama = OllamaLLM(
+#     base_url="http://192.168.50.42:11434",
+#     model="deepseek-r1:14b",
+#     temperature=0.5,
+# )
 
 
 def get_git_diff():
@@ -27,7 +35,8 @@ def get_git_diff():
 
 def generate_commit_message(changes):
     """Use OpenAI API to generate a commit message."""
-    response = ollama.invoke([
+    response = claude_client.invoke(
+        [
             (
                 "system",
                 "You are an assistant that generates helpful and concise git commit messages.",
@@ -37,8 +46,18 @@ def generate_commit_message(changes):
             ),
         ]
     )
-    print(response)
-    return response
+    # response = ollama.invoke([
+    #         (
+    #             "system",
+    #             "You are an assistant that generates helpful and concise git commit messages.",
+    #         ),
+    #         (
+    #             f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
+    #         ),
+    #     ]
+    # )
+    print(response.content)
+    return response.content
 
 
 def main():
