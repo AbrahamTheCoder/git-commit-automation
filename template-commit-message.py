@@ -5,7 +5,7 @@ from langchain_anthropic import AnthropicLLM, ChatAnthropic
 import os
 
 client_ollama = ChatOllama(
-    base_url="http://192.168.50.42:11434",
+    base_url=os.getenv("BASE_URL_AI"),
     model="qwen2.5-coder:3b",
     temperature=0.5,
 )
