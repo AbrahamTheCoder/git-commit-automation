@@ -1,22 +1,19 @@
 import subprocess
 # from openai import OpenAI
-# from langchain_ollama import OllamaLLM
+from langchain_ollama import OllamaLLM, ChatOllama
 from langchain_anthropic import AnthropicLLM, ChatAnthropic
 import os
 
-# load_env = os.getenv("LOAD_ENV")
-
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-# ollama_client = ChatOllama(
-#     base_url="http://192.168.50.42:11434",
-#     model="deepseek-r1:14b",
-#     temperature=0.5,
-# )
-
-claude_client = ChatAnthropic(
-    api_key=os.getenv("CLAUDE_API_KEY"),
-    model="claude-3-5-sonnet-20240620",
+client_ollama = ChatOllama(
+    base_url="http://192.168.50.42:11434",
+    model="qwen2.5-coder:3b",
+    temperature=0.5,
 )
+
+# claude_client = ChatAnthropic(
+#     api_key=os.getenv("CLAUDE_API_KEY"),
+#     model="claude-3-5-sonnet-20240620",
+# )
 
 # ollama = OllamaLLM(
 #     base_url="http://192.168.50.42:11434",
@@ -35,7 +32,19 @@ def get_git_diff():
 
 def generate_commit_message(changes):
     """Use OpenAI API to generate a commit message."""
-    response = claude_client.invoke(
+    # response = claude_client.invoke(
+    #     [
+    #         (
+    #             "system",
+    #             "You are an assistant that generates helpful and concise git commit messages.",
+    #         ),
+    #         (
+    #             f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
+    #         ),
+    #     ]
+    # )
+    
+    client_response = client_ollama.invoke(
         [
             (
                 "system",
@@ -46,18 +55,9 @@ def generate_commit_message(changes):
             ),
         ]
     )
-    # response = ollama.invoke([
-    #         (
-    #             "system",
-    #             "You are an assistant that generates helpful and concise git commit messages.",
-    #         ),
-    #         (
-    #             f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
-    #         ),
-    #     ]
-    # )
-    print(response.content)
-    return response.content
+    
+    print(f"Response: {client_response.content}")
+    return client_response.content
 
 
 def main():
