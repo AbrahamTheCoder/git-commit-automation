@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import subprocess
-# from openai import OpenAI
-from langchain_ollama import OllamaLLM, ChatOllama
-from langchain_anthropic import AnthropicLLM, ChatAnthropic
+
+from langchain_ollama import ChatOllama
+# Uncomment the following line to use Claude API
+# from langchain_anthropic import ChatAnthropic
 import os
 
 client_ollama = ChatOllama(
@@ -17,12 +18,6 @@ client_ollama = ChatOllama(
 #     model="claude-3-5-sonnet-20240620",
 # )
 
-# ollama = OllamaLLM(
-#     base_url="http://192.168.50.42:11434",
-#     model="deepseek-r1:14b",
-#     temperature=0.5,
-# )
-
 
 def get_git_diff():
     """Fetch the git changes."""
@@ -34,32 +29,23 @@ def get_git_diff():
 
 def generate_commit_message(changes):
     """Use OpenAI API to generate a commit message."""
-    # response = claude_client.invoke(
-    #     [
-    #         (
-    #             "system",
-    #             "You are an assistant that generates helpful and concise git commit messages.",
-    #         ),
-    #         (
-    #             f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
-    #         ),
-    #     ]
-    # )
+    prompt_message = [
+        (
+            "system",
+            "You are an assistant that generates helpful and concise git commit messages.",
+        ),
+        (
+            f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
+        ),
+    ]
+    # Uncomment the following line to use Claude API
     
-    client_response = client_ollama.invoke(
-        [
-            (
-                "system",
-                "You are an assistant that generates helpful and concise git commit messages.",
-            ),
-            (
-                f"Generate a Git commit message for the following changes, following the Git commit standards:\n\n{changes}"
-            ),
-        ]
-    )
-    
-    print(f"Response: {client_response.content}")
-    return client_response.content
+    # response = claude_client.invoke(prompt_message)
+
+    response = client_ollama.invoke(prompt_message)
+
+    print(f"Response: {response.content}")
+    return response.content
 
 
 def main():
